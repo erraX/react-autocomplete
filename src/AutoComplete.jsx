@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 import cx from 'classnames'
+import { makeContainerId, containsElement } from './util'
 import Dropdown from './Dropdown.jsx'
 import './AutoComplete.less'
 
@@ -35,7 +36,7 @@ export default class AutoComplete extends Component {
      */
     componentDidMount() {
         let { id = this.defaultId } = this.props
-        id = `${id}-dropdown__container`
+        id = makeContainerId(id)
 
         let container = document.getElementById(id)
 
@@ -62,8 +63,8 @@ export default class AutoComplete extends Component {
     componentDidUpdate() {
         ReactDOM.render((
             <Dropdown
-                {...this.props}
-                {...this.state}
+                active={this.state.active}
+                value={this.state.value} 
             />
         ), this.container)
     }
@@ -105,35 +106,16 @@ export default class AutoComplete extends Component {
     }
 
     /**
-     * is self or not
-     *
-     * @param {HTMLNode} target target
-     *
-     * @return {Boolean}
-     */
-    isSelfComponent(target) {
-        const { id = this.defaultId } = this.props
-
-        return target.id === id || target.id === this.container.id
-    }
-
-    /**
      * input value changed
      *
      * @param {Event} evt click event
      */
     cilckOutside(evt) {
+        const { id = this.defaultId } = this.props
         let { target } = evt
-        let parent = target
-        
-        if (this.isSelfComponent(parent)) {
-            return
-        }
 
-        while(parent = parent.parentElement) {
-            if (this.isSelfComponent(parent)) {
-                return
-            }
+        if (containsElement([id, this.container.id], target)) {
+            return
         }
 
         this.closeDropdown()
@@ -174,12 +156,15 @@ export default class AutoComplete extends Component {
         })
 
         return (
-            <div id={id} className={classNames}>
+            <div
+                id        = {id}
+                className = {classNames}
+            >
                 <input
-                    type="text"
-                    value={value}
-                    onClick={::this.inputClickHandler}
-                    onChange={::this.inputChangeHandler}
+                    type     = "text"
+                    value    = {value}
+                    onClick  = {::this.inputClickHandler}
+                    onChange = {::this.inputChangeHandler}
                 />
             </div>
         )

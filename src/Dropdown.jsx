@@ -3,11 +3,14 @@ import cx from 'classnames'
 import './Dropdown.less'
 
 export default class Dropdown extends Component {
-
     static propTypes = {
+        active: PropTypes.boolean,
+        value: PropTypes.string,
     }
 
     static defaultProps = {
+        active: false,
+        value: ''
     }
 
     PREFIX = 'react-autocomplete-dropdown'
@@ -23,11 +26,7 @@ export default class Dropdown extends Component {
 
         return (
             <div className={classNames}>
-                <ui>
-                    <li>1111111111</li>
-                    <li>2222222222</li>
-                    <li>33333333333</li>
-                </ui>
+                {value}
             </div>
         )
     }
