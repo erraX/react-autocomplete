@@ -22,7 +22,7 @@ export default class AutoComplete extends Component {
         this.container = null
 
         // defualt container id
-        this.containerId = (Math.random() * 1000).toString(32)
+        this.defaultId = (Math.random() * 1000).toString(32)
 
         this.state = {
             active: false,     // dropdown active
@@ -34,7 +34,7 @@ export default class AutoComplete extends Component {
      * create dropdown container
      */
     componentDidMount() {
-        let { id = this.containerId } = this.props
+        let { id = this.defaultId } = this.props
         id = `${id}-dropdown__container`
 
         let container = document.getElementById(id)
@@ -48,7 +48,6 @@ export default class AutoComplete extends Component {
 
         // set current container and id
         this.container = container
-        this.containerId = id
 
         // Render dropdown to container
         this.componentDidUpdate()
@@ -113,7 +112,9 @@ export default class AutoComplete extends Component {
      * @return {Boolean}
      */
     isSelfComponent(target) {
-        return target.id === this.props.id || target.id === this.containerId
+        const { id = this.defaultId } = this.props
+
+        return target.id === id || target.id === this.container.id
     }
 
     /**
@@ -165,7 +166,7 @@ export default class AutoComplete extends Component {
      */
     render() {
         const PREFIX = this.PREFIX
-        const { id } = this.props
+        const { id = this.defaultId } = this.props
         const { value } = this.state
 
         const classNames = cx({
