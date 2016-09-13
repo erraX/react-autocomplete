@@ -4,6 +4,9 @@ import cx from 'classnames'
 import Dropdown from './Dropdown.jsx'
 import './AutoComplete.less'
 
+/**
+ * @extends Component
+ */
 export default class AutoComplete extends Component {
     PREFIX = 'react-autocomplete'
 
@@ -49,6 +52,9 @@ export default class AutoComplete extends Component {
 
         // Render dropdown to container
         this.componentDidUpdate()
+
+        // hide dropdown when click outside
+        document.addEventListener('click', ::this.cilckOutside)
     }
 
     /**
@@ -97,6 +103,39 @@ export default class AutoComplete extends Component {
         this.setState({ 
             active: !active
         })
+    }
+
+    /**
+     * is self or not
+     *
+     * @param {HTMLNode} target target
+     *
+     * @return {Boolean}
+     */
+    isSelfComponent(target) {
+        return target.id === this.props.id || target.id === this.containerId
+    }
+
+    /**
+     * input value changed
+     *
+     * @param {Event} evt click event
+     */
+    cilckOutside(evt) {
+        let { target } = evt
+        let parent = target
+        
+        if (this.isSelfComponent(parent)) {
+            return
+        }
+
+        while(parent = parent.parentElement) {
+            if (this.isSelfComponent(parent)) {
+                return
+            }
+        }
+
+        this.closeDropdown()
     }
     
     /**

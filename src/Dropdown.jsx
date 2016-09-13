@@ -22,7 +22,13 @@ export default class Dropdown extends Component {
         })
 
         return (
-            <div className={classNames}>This is dropdown: {value}</div>
+            <div className={classNames}>
+                <ui>
+                    <li>1111111111</li>
+                    <li>2222222222</li>
+                    <li>33333333333</li>
+                </ui>
+            </div>
         )
     }
 }
