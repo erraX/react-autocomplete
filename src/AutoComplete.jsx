@@ -9,6 +9,20 @@ import './AutoComplete.less'
  * @extends Component
  */
 export default class AutoComplete extends Component {
+
+    /**
+     * @memberof Dropdown
+     *
+     * @prop {String} value
+     * @prop {Boolean} active
+     * @prop {Array} suggestions
+     * @prop {Function} filterSuggestions
+     */
+    static propTypes = {
+        suggestions       : PropTypes.array.isRequired,
+        filterSuggestions : PropTypes.func
+    }
+
     PREFIX = 'react-autocomplete'
 
     /**
@@ -63,8 +77,10 @@ export default class AutoComplete extends Component {
     componentDidUpdate() {
         ReactDOM.render((
             <Dropdown
-                active={this.state.active}
-                value={this.state.value} 
+                active            = {this.state.active}
+                value             = {this.state.value}
+                suggestions       = {this.props.suggestions}
+                filterSuggestions = {this.props.filterSuggestions}
             />
         ), this.container)
     }
@@ -112,7 +128,7 @@ export default class AutoComplete extends Component {
      */
     cilckOutside(evt) {
         const { id = this.defaultId } = this.props
-        let { target } = evt
+        const { target } = evt
 
         if (containsElement([id, this.container.id], target)) {
             return
@@ -161,6 +177,7 @@ export default class AutoComplete extends Component {
                 className = {classNames}
             >
                 <input
+                    ref      = "input"
                     type     = "text"
                     value    = {value}
                     onClick  = {::this.inputClickHandler}

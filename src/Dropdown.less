@@ -1,7 +1,26 @@
 .react-autocomplete-dropdown {
     display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100px;
+    overflow: hidden;
+
+    ul,
+    li {
+        margin: 0;
+        padding: 0;
+    }
 
     &--active {
         display: block;
+    }
+
+    &__item {
+        height: 20px;
+
+        &:hover {
+            cursor: pointer;
+        }
     }
 }

@@ -27,3 +27,12 @@ export function containsElement(id, child) {
 
     return false
 }
+
+export function defaultFilter(suggestions, value) {
+    return suggestions.filter(s => {
+        const name = s.name.toLowerCase()
+        value = value.toLowerCase()
+        
+        return name.indexOf(value) !== -1
+    })
+}
