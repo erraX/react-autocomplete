@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 import cx from 'classnames'
-import { makeContainerId, containsElement } from './util'
+import { makeContainerId, containsElement, getAbsolutePosition } from './util'
 import Dropdown from './Dropdown.jsx'
 import './AutoComplete.less'
 
@@ -19,6 +19,7 @@ export default class AutoComplete extends Component {
      * @prop {Function} filterSuggestions
      */
     static propTypes = {
+        maxHeight         : PropTypes.number,
         suggestions       : PropTypes.array.isRequired,
         filterSuggestions : PropTypes.func
     }
@@ -49,6 +50,7 @@ export default class AutoComplete extends Component {
      * create dropdown container
      */
     componentDidMount() {
+        window.i = this.refs.input
         let { id = this.defaultId } = this.props
         id = makeContainerId(id)
 
@@ -75,12 +77,22 @@ export default class AutoComplete extends Component {
      * render dropdown
      */
     componentDidUpdate() {
+        const { input } = this.refs
+        const { top, left, width, height } = getAbsolutePosition(input)
+
+        const position = {
+            top: top + height,
+            left,
+            width,
+        }
+
         ReactDOM.render((
             <Dropdown
                 active            = {this.state.active}
                 value             = {this.state.value}
-                suggestions       = {this.props.suggestions}
-                filterSuggestions = {this.props.filterSuggestions}
+                clickSuggestion   = {::this.clickSuggestionHandler}
+                {...this.props}
+                {...position}
             />
         ), this.container)
     }
@@ -135,6 +147,19 @@ export default class AutoComplete extends Component {
         }
 
         this.closeDropdown()
+    }
+
+    /**
+     * click suggestion
+     * set value and hide dropdown
+     *
+     * @param {String} value suggestion value
+     */
+    clickSuggestionHandler(value) {
+        this.setState({
+            value,
+            active: false,
+        })
     }
     
     /**

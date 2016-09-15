@@ -36,3 +36,14 @@ export function defaultFilter(suggestions, value) {
         return name.indexOf(value) !== -1
     })
 }
+
+export function getAbsolutePosition(element) {
+    const { left, top, width, height } = element.getBoundingClientRect()
+
+    return {
+        top: top + document.body.scrollTop ,
+        left: left + document.body.scrollLeft,
+        width,
+        height,
+    }
+}

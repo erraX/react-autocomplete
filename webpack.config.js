@@ -1,6 +1,6 @@
-import webpack from 'webpack'
+var webpack = require('webpack')
 
-export default {
+module.exports = {
     devtool: 'cheap-eval-source-map',
     entry: {
         index: ['./index.js'],

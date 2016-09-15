@@ -23,6 +23,7 @@ export default class Dropdown extends Component {
         value             : PropTypes.string,
         active            : PropTypes.bool,
         filterSuggestions : PropTypes.func,
+        maxHeight         : PropTypes.number,
         suggestions       : PropTypes.array.isRequired,
         top               : PropTypes.number.isRequired,
         left              : PropTypes.number.isRequired,
@@ -32,6 +33,7 @@ export default class Dropdown extends Component {
     static defaultProps = {
         value             : '',
         active            : false,
+        maxHeight         : 200,
         filterSuggestions : defaultFilter,
     }
 
@@ -51,6 +53,7 @@ export default class Dropdown extends Component {
     }
 
     clickSuggestionHandler(value) {
+        this.props.clickSuggestion(value)
     }
 
     /**
@@ -67,9 +70,9 @@ export default class Dropdown extends Component {
                     {
                         suggestions.map(s => 
                             <li
-                                className={`${PREFIX}__item`}
-                                key     = {s.name}
-                                onClick = {() => this.clickSuggestionHandler(s.name)}
+                                className = {`${PREFIX}__item`}
+                                key       = {s.name}
+                                onClick   = {() => this.clickSuggestionHandler(s.name)}
                             >
                                 {s.name}
                             </li>
@@ -91,7 +94,8 @@ export default class Dropdown extends Component {
             active,
             top,
             left,
-            width
+            width,
+            maxHeight,
         } = this.props
         
         const classNames = cx({
@@ -103,6 +107,7 @@ export default class Dropdown extends Component {
             top,
             left,
             width,
+            maxHeight,
         }
 
         return (
