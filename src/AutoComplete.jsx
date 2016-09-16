@@ -170,11 +170,12 @@ export default class AutoComplete extends Component {
     inputChangeHandler(evt) {
         const value = evt.target.value
 
-        this.setState({value})
+        this.setState({ value })
     }
 
     /**
      * click input
+     * open dropdown 
      *
      * @param {Event} evt click event
      */

@@ -52,6 +52,12 @@ export default class Dropdown extends Component {
         return filterSuggestions(suggestions, value)
     }
 
+    /**
+     * click suggestion
+     * set value and hide dropdown
+     *
+     * @param {String} value suggestion value
+     */
     clickSuggestionHandler(value) {
         this.props.clickSuggestion(value)
     }
