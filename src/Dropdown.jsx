@@ -69,10 +69,24 @@ export default class Dropdown extends Component {
      */
     renderSuggestions() {
         const PREFIX = this.PREFIX
+        const { width, maxHeight } = this.props
         const suggestions = this.filterSuggestions()
 
+        // Nothing can suggest
+        if (!suggestions.length) {
+            return null
+        }
+
+        const style = {
+            width,
+            maxHeight,
+        }
+
         return (
-                <ul>
+                <ul
+                    className = {`${PREFIX}__list`}
+                    style     = {style}
+                >
                     {
                         suggestions.map(s => 
                             <li
@@ -112,8 +126,6 @@ export default class Dropdown extends Component {
         const style = {
             top,
             left,
-            width,
-            maxHeight,
         }
 
         return (

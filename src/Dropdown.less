@@ -3,9 +3,6 @@
     position: absolute;
     top: 0;
     left: 0;
-    width: 100px;
-    overflow: scroll;
-    background-color: red;
 
     ul,
     li {
@@ -17,11 +14,22 @@
         display: block;
     }
 
+    &__list {
+      width: 100px;
+      overflow: scroll;
+      background-color: #fff;
+      box-shadow: rgba(0, 0, 0, 0.117647) 0px 1px 6px, rgba(0, 0, 0, 0.117647) 0px 1px 4px;
+    }
+
     &__item {
-        height: 20px;
+        text-indent: 10px;
+        height: 18px;
+        line-height: 18px;
+        font-size: 12px;
 
         &:hover {
             cursor: pointer;
+            background-color: #ececec;
         }
     }
 }

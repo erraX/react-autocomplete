@@ -1,7 +1,19 @@
 .react-autocomplete {
     display: inline-block;
 
-    input[type="text"]:focus {
-        outline: none;
+    input[type="text"] {
+        border: 0;
+        height: 18px;
+        text-indent: 10px;
+        /* transition: box-shadow 0.3s; */
+
+        &:hover {
+            /* box-shadow: 0px 0px 2px 1px #a7d5f2; */
+        }
+    
+        &:focus {
+            outline: none;
+            /* box-shadow: 0px 0px 2px 1px #a7d5f2; */
+        }
     }
 }
