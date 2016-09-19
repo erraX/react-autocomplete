@@ -1,9 +1,18 @@
 import React, { Component, PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 import cx from 'classnames'
-import { makeContainerId, containsElement, getAbsolutePosition } from './util'
+import {
+    makeContainerId,
+    containsElement,
+    getAbsolutePosition,
+    defaultFilter
+} from './util'
 import Dropdown from './Dropdown.jsx'
 import './AutoComplete.less'
+
+const KEY_DOWN = 40
+const KEY_UP = 38
+const KEY_ENTER = 13
 
 /**
  * @extends Component
@@ -24,6 +33,10 @@ export default class AutoComplete extends Component {
         filterSuggestions : PropTypes.func
     }
 
+    static defaultProps = {
+        filterSuggestions : defaultFilter,
+    }
+
     PREFIX = 'react-autocomplete'
 
     /**
@@ -42,7 +55,8 @@ export default class AutoComplete extends Component {
 
         this.state = {
             active: false,     // dropdown active
-            value: ''          // input value
+            value: '',         // input value
+            selected: 0        // default selected item
         }
     }
 
@@ -50,7 +64,6 @@ export default class AutoComplete extends Component {
      * create dropdown container
      */
     componentDidMount() {
-        window.i = this.refs.input
         let { id = this.defaultId } = this.props
         id = makeContainerId(id)
 
@@ -79,6 +92,7 @@ export default class AutoComplete extends Component {
     componentDidUpdate() {
         const { input } = this.refs
         const { top, left, width, height } = getAbsolutePosition(input)
+        const { active, value, selected } = this.state
 
         const position = {
             top: top + height,
@@ -88,10 +102,11 @@ export default class AutoComplete extends Component {
 
         ReactDOM.render((
             <Dropdown
-                active            = {this.state.active}
-                value             = {this.state.value}
+                active            = {active}
+                value             = {value}
+                selected          = {selected}
+                suggestions       = {this.filterSuggestions()}
                 clickSuggestion   = {::this.clickSuggestionHandler}
-                {...this.props}
                 {...position}
             />
         ), this.container)
@@ -106,6 +121,18 @@ export default class AutoComplete extends Component {
 
         // remove from body
         document.body.removeChild(this.container)
+    }
+
+    /**
+     * filter suggestions
+     *
+     * @return {Array}
+     */
+    filterSuggestions() {
+        const { suggestions, filterSuggestions } = this.props
+        const { value } = this.state
+
+        return filterSuggestions(suggestions, value)
     }
 
     /**
@@ -161,6 +188,52 @@ export default class AutoComplete extends Component {
             active: false,
         })
     }
+
+    /**
+     * navigation
+     *
+     * @param {Event} evt key event
+     */
+    navigationHandler(evt) {
+        const { keyCode } = evt
+        const { selected } = this.state
+        const suggestions = this.filterSuggestions()
+
+        switch (keyCode) {
+            case KEY_DOWN:
+                this.selectNextSuggestion(suggestions)
+                break
+            case KEY_UP:
+                this.selectPreviousSuggestion(suggestions)
+                break
+            case KEY_ENTER:
+                this.enterCurrentSuggestion(suggestions)
+                break
+            default:
+                break
+        }
+    }
+
+    enterCurrentSuggestion(suggestions) {
+        const { selected } = this.state
+
+        this.setState({
+            selected: 0,
+            value: suggestions[selected].name,
+        })
+    }
+
+    selectNextSuggestion(suggestions) {
+        const { selected } = this.state
+        let nextSelected = selected >= suggestions.length - 1 ? 0 : selected + 1
+        this.setState({ selected: nextSelected })
+    }
+
+    selectPreviousSuggestion(suggestions) {
+        const { selected } = this.state
+        let nextSelected = selected <= 0 ? suggestions.length - 1 : selected - 1
+        this.setState({ selected: nextSelected })
+    }
     
     /**
      * input value changed
@@ -203,11 +276,12 @@ export default class AutoComplete extends Component {
                 className = {classNames}
             >
                 <input
-                    ref      = "input"
-                    type     = "text"
-                    value    = {value}
-                    onClick  = {::this.inputClickHandler}
-                    onChange = {::this.inputChangeHandler}
+                    ref       = "input"
+                    type      = "text"
+                    value     = {value}
+                    onKeyDown = {::this.navigationHandler}
+                    onClick   = {::this.inputClickHandler}
+                    onChange  = {::this.inputChangeHandler}
                 />
             </div>
         )

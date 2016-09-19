@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import cx from 'classnames'
+import { findDOMNode } from 'react-dom'
 import { defaultFilter } from './util'
 import './Dropdown.less'
 
@@ -13,7 +14,6 @@ export default class Dropdown extends Component {
      *
      * @prop {String} value
      * @prop {Boolean} active
-     * @prop {Function} filterSuggestions
      * @prop {Array} suggestions
      * @prop {Number} top
      * @prop {Number} left
@@ -22,7 +22,7 @@ export default class Dropdown extends Component {
     static propTypes = {
         value             : PropTypes.string,
         active            : PropTypes.bool,
-        filterSuggestions : PropTypes.func,
+        selected          : PropTypes.number,
         maxHeight         : PropTypes.number,
         suggestions       : PropTypes.array.isRequired,
         top               : PropTypes.number.isRequired,
@@ -34,22 +34,26 @@ export default class Dropdown extends Component {
         value             : '',
         active            : false,
         maxHeight         : 200,
-        filterSuggestions : defaultFilter,
     }
 
     /**
      * class prefix
      */
     PREFIX = 'react-autocomplete-dropdown'
-    
-    /**
-     * filter suggestions
-     *
-     * @return {Array}
-     */
-    filterSuggestions() {
-        const { suggestions, value, filterSuggestions } = this.props
-        return filterSuggestions(suggestions, value)
+
+    componentDidUpdate() {
+        const selectedItems = findDOMNode(this).getElementsByClassName(`${this.PREFIX}__item--selected`)
+        selectedItems.length && this.scrollIntoView(selectedItems[0])
+    }
+
+    scrollIntoView(element) {
+        const { maxHeight } = this.props
+        const parent = element.parentElement
+        const offset = element.offsetTop - parent.scrollTop
+
+        if ((offset > maxHeight - element.offsetHeight) || offset < 0) {
+            parent.scrollTop = element.offsetTop
+        }
     }
 
     /**
@@ -69,8 +73,7 @@ export default class Dropdown extends Component {
      */
     renderSuggestions() {
         const PREFIX = this.PREFIX
-        const { width, maxHeight } = this.props
-        const suggestions = this.filterSuggestions()
+        const { width, maxHeight, selected, suggestions } = this.props
 
         // Nothing can suggest
         if (!suggestions.length) {
@@ -88,9 +91,14 @@ export default class Dropdown extends Component {
                     style     = {style}
                 >
                     {
-                        suggestions.map(s => 
+                        suggestions.map((s, idx) => 
                             <li
-                                className = {`${PREFIX}__item`}
+                                className = {
+                                    cx({
+                                        [`${PREFIX}__item`]: true,
+                                        [`${PREFIX}__item--selected`]: selected === idx,
+                                    })
+                                }
                                 key       = {s.name}
                                 onClick   = {() => this.clickSuggestionHandler(s.name)}
                             >
