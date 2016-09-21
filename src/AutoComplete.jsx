@@ -199,19 +199,15 @@ export default class AutoComplete extends Component {
         const { selected } = this.state
         const suggestions = this.filterSuggestions()
 
-        switch (keyCode) {
-            case KEY_DOWN:
-                this.selectNextSuggestion(suggestions)
-                break
-            case KEY_UP:
-                this.selectPreviousSuggestion(suggestions)
-                break
-            case KEY_ENTER:
-                this.enterCurrentSuggestion(suggestions)
-                break
-            default:
-                break
-        }
+        // handler hash table
+        const handlers = {
+            [KEY_DOWN]: () => this.selectNextSuggestion(suggestions),
+            [KEY_UP]: () => this.selectPreviousSuggestion(suggestions),
+            [KEY_ENTER]: () => this.enterCurrentSuggestion(suggestions),
+            default: () => {},
+        };
+
+        (handlers[keyCode] || handlers('default'))()
     }
 
     enterCurrentSuggestion(suggestions) {
